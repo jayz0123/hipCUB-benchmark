@@ -26,6 +26,6 @@ Docker: rocm/dev-ubuntu-22.04:5.6-complete
   - L3 Unified 16384 KiB (x32)
 - Load Average: 12.71, 7.02, 4.09
 
-| Benchmark | Time | CPU | Iterations UserCounters...|
-| --------- | ---- | --- | ------------------------- |
-| sort_pairs<float, int>(~16 segments), descending/manual_time | 14.4 ms | 14.4 ms | bytes_per_second=2.66979G/s items_per_second=358.333M/ |
+| Benchmark | Time | CPU | Iterations | UserCounters...|
+| --------- | ---- | --- | ---------- | -------------- |
+| sort_pairs<float, int>(~16 segments), descending/manual_time | 14.4 ms | 14.4 ms | 49| bytes_per_second=2.66979G/s items_per_second=358.333M/ |
