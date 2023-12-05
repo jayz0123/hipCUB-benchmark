@@ -25,78 +25,85 @@ function(add_hipcub_benchmark BENCHMARK_SOURCE)
   add_executable(${BENCHMARK_TARGET} ${BENCHMARK_SOURCE})
   target_include_directories(${BENCHMARK_TARGET} SYSTEM BEFORE
     PUBLIC
-      "$<BUILD_INTERFACE:${GOOGLEBENCHMARK_ROOT}/include>"
+    "$<BUILD_INTERFACE:${GOOGLEBENCHMARK_ROOT}/include>"
   )
   target_link_libraries(${BENCHMARK_TARGET}
     PRIVATE
-      benchmark::benchmark
-      hipcub
+    benchmark::benchmark
+    hipcub
   )
+
   if((HIP_COMPILER STREQUAL "nvcc"))
     set_property(TARGET ${BENCHMARK_TARGET} PROPERTY CUDA_STANDARD 14)
     set_source_files_properties(${BENCHMARK_SOURCE} PROPERTIES LANGUAGE CUDA)
     target_compile_options(${BENCHMARK_TARGET}
       PRIVATE
-        $<$<COMPILE_LANGUAGE:CUDA>:--expt-extended-lambda>
+      $<$<COMPILE_LANGUAGE:CUDA>:--expt-extended-lambda>
     )
     target_link_libraries(${BENCHMARK_TARGET}
       PRIVATE
-        hipcub_cub
+      hipcub_cub
     )
   endif()
+
   set_target_properties(${BENCHMARK_TARGET}
     PROPERTIES
-      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/benchmark"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/benchmark"
   )
   rocm_install(TARGETS ${BENCHMARK_TARGET} COMPONENT benchmarks)
-  if (WIN32 AND NOT DEFINED DLLS_COPIED)
+
+  if(WIN32 AND NOT DEFINED DLLS_COPIED)
     set(DLLS_COPIED "YES")
     set(DLLS_COPIED ${DLLS_COPIED} PARENT_SCOPE)
+
     # for now adding in all .dll as dependency chain is not cmake based on win32
-    file( GLOB third_party_dlls
-    LIST_DIRECTORIES ON
-    CONFIGURE_DEPENDS
-    ${HIP_DIR}/bin/*.dll
-    ${CMAKE_SOURCE_DIR}/rtest.*
+    file(GLOB third_party_dlls
+      LIST_DIRECTORIES ON
+      CONFIGURE_DEPENDS
+      ${HIP_DIR}/bin/*.dll
+      ${CMAKE_SOURCE_DIR}/rtest.*
     )
-    foreach( file_i ${third_party_dlls})
-      add_custom_command( TARGET ${BENCHMARK_TARGET} POST_BUILD COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${file_i} ${PROJECT_BINARY_DIR}/benchmark )
-    endforeach( file_i )
-  endif()         
+
+    foreach(file_i ${third_party_dlls})
+      add_custom_command(TARGET ${BENCHMARK_TARGET} POST_BUILD COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${file_i} ${PROJECT_BINARY_DIR}/benchmark)
+    endforeach(file_i)
+  endif()
 endfunction()
 
 # ****************************************************************************
 # Benchmarks
 # ****************************************************************************
-add_hipcub_benchmark(benchmark_block_adjacent_difference.cpp)
-add_hipcub_benchmark(benchmark_block_discontinuity.cpp)
-add_hipcub_benchmark(benchmark_block_exchange.cpp)
-add_hipcub_benchmark(benchmark_block_histogram.cpp)
-add_hipcub_benchmark(benchmark_block_merge_sort.cpp)
-add_hipcub_benchmark(benchmark_block_radix_sort.cpp)
-add_hipcub_benchmark(benchmark_block_radix_rank.cpp)
-add_hipcub_benchmark(benchmark_block_reduce.cpp)
-add_hipcub_benchmark(benchmark_block_run_length_decode.cpp)
-add_hipcub_benchmark(benchmark_block_scan.cpp)
-add_hipcub_benchmark(benchmark_block_shuffle.cpp)
-add_hipcub_benchmark(benchmark_device_adjacent_difference.cpp)
-add_hipcub_benchmark(benchmark_device_histogram.cpp)
-add_hipcub_benchmark(benchmark_device_memory.cpp)
-add_hipcub_benchmark(benchmark_device_merge_sort.cpp)
-add_hipcub_benchmark(benchmark_device_partition.cpp)
-add_hipcub_benchmark(benchmark_device_radix_sort.cpp)
-add_hipcub_benchmark(benchmark_device_reduce_by_key.cpp)
-add_hipcub_benchmark(benchmark_device_reduce.cpp)
-add_hipcub_benchmark(benchmark_device_run_length_encode.cpp)
-add_hipcub_benchmark(benchmark_device_scan.cpp)
-add_hipcub_benchmark(benchmark_device_segmented_sort.cpp)
-add_hipcub_benchmark(benchmark_device_segmented_radix_sort.cpp)
-add_hipcub_benchmark(benchmark_device_segmented_reduce.cpp)
-add_hipcub_benchmark(benchmark_device_select.cpp)
-add_hipcub_benchmark(benchmark_device_spmv.cpp)
-add_hipcub_benchmark(benchmark_warp_exchange.cpp)
-add_hipcub_benchmark(benchmark_warp_load.cpp)
-add_hipcub_benchmark(benchmark_warp_reduce.cpp)
-add_hipcub_benchmark(benchmark_warp_scan.cpp)
-add_hipcub_benchmark(benchmark_warp_store.cpp)
-add_hipcub_benchmark(benchmark_warp_merge_sort.cpp)
+add_hipcub_benchmark(segmented16_radix_sort.cpp)
+
+# add_hipcub_benchmark(benchmark_block_adjacent_difference.cpp)
+# add_hipcub_benchmark(benchmark_block_discontinuity.cpp)
+# add_hipcub_benchmark(benchmark_block_exchange.cpp)
+# add_hipcub_benchmark(benchmark_block_histogram.cpp)
+# add_hipcub_benchmark(benchmark_block_merge_sort.cpp)
+# add_hipcub_benchmark(benchmark_block_radix_sort.cpp)
+# add_hipcub_benchmark(benchmark_block_radix_rank.cpp)
+# add_hipcub_benchmark(benchmark_block_reduce.cpp)
+# add_hipcub_benchmark(benchmark_block_run_length_decode.cpp)
+# add_hipcub_benchmark(benchmark_block_scan.cpp)
+# add_hipcub_benchmark(benchmark_block_shuffle.cpp)
+# add_hipcub_benchmark(benchmark_device_adjacent_difference.cpp)
+# add_hipcub_benchmark(benchmark_device_histogram.cpp)
+# add_hipcub_benchmark(benchmark_device_memory.cpp)
+# add_hipcub_benchmark(benchmark_device_merge_sort.cpp)
+# add_hipcub_benchmark(benchmark_device_partition.cpp)
+# add_hipcub_benchmark(benchmark_device_radix_sort.cpp)
+# add_hipcub_benchmark(benchmark_device_reduce_by_key.cpp)
+# add_hipcub_benchmark(benchmark_device_reduce.cpp)
+# add_hipcub_benchmark(benchmark_device_run_length_encode.cpp)
+# add_hipcub_benchmark(benchmark_device_scan.cpp)
+# add_hipcub_benchmark(benchmark_device_segmented_sort.cpp)
+# add_hipcub_benchmark(benchmark_device_segmented_radix_sort.cpp)
+# add_hipcub_benchmark(benchmark_device_segmented_reduce.cpp)
+# add_hipcub_benchmark(benchmark_device_select.cpp)
+# add_hipcub_benchmark(benchmark_device_spmv.cpp)
+# add_hipcub_benchmark(benchmark_warp_exchange.cpp)
+# add_hipcub_benchmark(benchmark_warp_load.cpp)
+# add_hipcub_benchmark(benchmark_warp_reduce.cpp)
+# add_hipcub_benchmark(benchmark_warp_scan.cpp)
+# add_hipcub_benchmark(benchmark_warp_store.cpp)
+# add_hipcub_benchmark(benchmark_warp_merge_sort.cpp)
